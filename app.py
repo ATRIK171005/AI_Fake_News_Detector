@@ -180,9 +180,12 @@ elif hasattr(active_model, "decision_function"):
 else:
     prob_fake = 1.0 if pred_class == 1 else 0.0
 
-# Boost fake probability if structural clickbait features exist
+# Boost fake probability ONLY if true clickbait/conspiracy heuristics exist (ignoring standard acronyms)
 clickbait_hits = [term for term in CLICKBAIT_LEXICON if term in user_text.lower()]
-if len(clickbait_hits) >= 1 or stats["Exclamation Marks (!)"] >= 1 or stats["All-Caps Words"] >= 2:
+standard_acronyms = {"USA", "NASA", "FBI", "CIA", "DNC", "RNC", "GOP", "UN", "WHO", "CDC", "EU", "UK", "US", "CEO", "CFO", "GDP", "IRS", "SEC", "NATO", "OPEC", "AP", "BBC", "ECB", "FED", "WSJ", "NYT", "CNN", "NPR", "PBS"}
+all_caps_shout = [w for w in re.findall(r'\b[A-Z]{4,}\b', user_text) if w not in standard_acronyms]
+
+if len(clickbait_hits) >= 1 and (len(all_caps_shout) >= 1 or "!" in user_text):
     prob_fake = max(prob_fake, 0.95)
 
 prob_real = 1.0 - prob_fake
@@ -192,7 +195,7 @@ if live_check_enabled:
     live_result = fact_checker.verify_against_ongoing_news(user_text, prob_fake)
 else:
     # If disabled, still apply heuristic zero-tolerance
-    if prob_fake >= 0.5 or len(clickbait_hits) >= 1:
+    if prob_fake >= 0.50 or len(clickbait_hits) >= 1:
         live_result = {
             "live_status": "❌ ZERO RELIABLE ONLINE SOURCES CORROBORATE THIS CLAIM",
             "web_match_score": 0.0,
@@ -221,13 +224,11 @@ exp_results = explain_prediction(cleaned_str, vectorizer, active_model, top_k=5)
 # Log audit
 database.log_prediction(selected_model_name, user_text, cleaned_str, live_result["hybrid_verdict"], live_result["hybrid_confidence"])
 
-# Prepare dynamically computed variables for Google Stitch HTML template
+# Prepare dynamically computed variables for Google Stitch HTML template (strictly obeying verified hybrid_verdict)
 is_fake = (
     "FAKE" in live_result["hybrid_verdict"]
     or "FABRICATED" in live_result["hybrid_verdict"]
     or "HOAX" in live_result["hybrid_verdict"]
-    or "UNVERIFIED" in live_result["hybrid_verdict"]
-    or prob_fake >= 0.40
 )
 
 conf_percentage = f"{live_result['hybrid_confidence']*100:.1f}%"

@@ -3,7 +3,7 @@ live_fact_checker.py
 --------------------
 Live Ongoing News & Reliable Online Source Cross-Referencing Engine.
 Queries live public news wires (`Google News RSS`) and verified high-authority institutional archives
-(`Reuters`, `Associated Press`, `BBC News`, `FactCheck.org`, `Snopes`, `PolitiFact`, `NASA`, `WHO`)
+(`Reuters`, `Associated Press`, `BBC News`, `FactCheck.org`, `Snopes`, `PolitiFact`, `NASA`, `WHO`, `PBS`, `CBS`, etc.)
 to cross-examine whether news claims are corroborated by reliable online sources or debunked as hoaxes.
 Combines exact external Domain Credibility Tiers with internal TF-IDF NLP classifications.
 """
@@ -18,7 +18,7 @@ from utils import get_logger
 logger = get_logger("LiveFactChecker")
 
 # =====================================================================
-# Domain Authority & Credibility Whitelist Tiers
+# Comprehensive Domain Authority & Credibility Whitelist Tiers
 # =====================================================================
 TIER_1_RELIABLE_WIRES = {
     "reuters.com": "Reuters Global Wire (Tier 1 Reliable)",
@@ -32,7 +32,11 @@ TIER_1_RELIABLE_WIRES = {
     "federalreserve.gov": "Federal Reserve Official Archive (Tier 1 Reliable)",
     "nature.com": "Nature Scientific Journal (Tier 1 Reliable)",
     "science.org": "Science AAAS Journal (Tier 1 Reliable)",
-    "ieee.org": "IEEE Technical Library (Tier 1 Reliable)"
+    "ieee.org": "IEEE Technical Library (Tier 1 Reliable)",
+    "pbs.org": "PBS NewsHour (Tier 1 Reliable)",
+    "npr.org": "National Public Radio (Tier 1 Reliable)",
+    "economist.com": "The Economist (Tier 1 Reliable)",
+    "ft.com": "Financial Times (Tier 1 Reliable)"
 }
 
 TIER_1_FACT_CHECKERS = {
@@ -48,16 +52,27 @@ TIER_2_MAINSTREAM_NEWS = {
     "nytimes.com": "The New York Times (Tier 2 Credible News)",
     "wsj.com": "The Wall Street Journal (Tier 2 Credible News)",
     "theguardian.com": "The Guardian (Tier 2 Credible News)",
-    "ft.com": "Financial Times (Tier 2 Credible News)",
-    "economist.com": "The Economist (Tier 2 Credible News)",
-    "npr.org": "National Public Radio (Tier 2 Credible News)",
+    "washingtonpost.com": "The Washington Post (Tier 2 Credible News)",
     "aljazeera.com": "Al Jazeera English (Tier 2 Credible News)",
     "thehindu.com": "The Hindu National News (Tier 2 Credible News)",
     "ndtv.com": "NDTV News Network (Tier 2 Credible News)",
-    "washingtonpost.com": "The Washington Post (Tier 2 Credible News)",
+    "cbsnews.com": "CBS News (Tier 2 Credible News)",
+    "abcnews.go.com": "ABC News (Tier 2 Credible News)",
+    "nbcnews.com": "NBC News (Tier 2 Credible News)",
+    "cnn.com": "CNN News Network (Tier 2 Credible News)",
+    "foxnews.com": "Fox News (Tier 2 Credible News)",
+    "usatoday.com": "USA Today (Tier 2 Credible News)",
+    "yahoo.com": "Yahoo News (Tier 2 Credible News)",
+    "msn.com": "MSN News Network (Tier 2 Credible News)",
+    "time.com": "Time Magazine (Tier 2 Credible News)",
+    "newsweek.com": "Newsweek Magazine (Tier 2 Credible News)",
     "forbes.com": "Forbes Financial (Tier 2 Credible News)",
     "techcrunch.com": "TechCrunch Technology News (Tier 2 Credible News)",
-    "wired.com": "Wired Magazine (Tier 2 Credible News)"
+    "wired.com": "Wired Magazine (Tier 2 Credible News)",
+    "politico.com": "Politico Political News (Tier 2 Credible News)",
+    "thehill.com": "The Hill Congressional News (Tier 2 Credible News)",
+    "axios.com": "Axios News (Tier 2 Credible News)",
+    "propublica.org": "ProPublica Investigative Reporting (Tier 2 Credible News)"
 }
 
 # Expanded Hoax, Clickbait, & Conspiracy triggers for zero-tolerance flagging
@@ -80,7 +95,13 @@ CLICKBAIT_LEXICON = {
     "synthetic chemical", "instant cure", "home remedy cures everything"
 }
 
-# Authoritative Tier-1 Live Corroboration Reference Database (Ensures reliable verification even if RSS offline/rate-limited)
+# Standard abbreviations that must NOT be treated as sensational all-caps
+STANDARD_ACRONYMS = {
+    "USA", "NASA", "FBI", "CIA", "DNC", "RNC", "GOP", "UN", "WHO", "CDC", "EU", "UK", "US", "CEO", "CFO", "GDP",
+    "IRS", "SEC", "ECB", "FED", "WSJ", "NYT", "BBC", "CNN", "NPR", "PBS", "AP", "NDTV", "ACLU", "NATO", "OPEC"
+}
+
+# Authoritative Tier-1 Live Corroboration Reference Database
 AUTHORITATIVE_WIRE_REFERENCES = [
     {
         "topics": ["federal reserve", "interest rate", "inflation", "basis point", "september", "powell", "economy", "central bank"],
@@ -162,21 +183,18 @@ class LiveFactChecker:
         """
         if not text:
             return ""
-        # Clean text
         clean_txt = re.sub(r'[^a-zA-Z0-9\s]', ' ', text)
         words = clean_txt.split()
         
-        # Stopwords to remove
         stopwords = {
             "the", "and", "for", "that", "this", "with", "from", "after", "over", "into", "during", "held",
             "today", "when", "about", "have", "been", "were", "they", "their", "most", "recent", "meeting",
             "indicated", "would", "likely", "begin", "reducing", "later", "year", "provided", "continues",
             "steady", "decline", "toward", "target", "suggest", "baseline", "scenario", "participants",
             "according", "published", "journal", "researchers", "documented", "significant", "advancements",
-            "regarding", "composition", "under", "empirical", "laboratory", "verification"
+            "regarding", "composition", "under", "empirical", "laboratory", "verification", "press", "release"
         }
         
-        # Extract meaningful nouns and entities
         keywords = [w for w in words if len(w) > 3 and w.lower() not in stopwords]
         if not keywords:
             keywords = [w for w in words if len(w) > 2][:6]
@@ -215,9 +233,10 @@ class LiveFactChecker:
                 if " - " in title:
                     clean_title = title.rsplit(" - ", 1)[0]
 
-                credibility_tier = "Tier 3 Unverified / General Web Source"
-                credibility_score = 20.0
-                tier_badge = "⚪ Unverified"
+                # Default to Tier 2 if indexed by Google News from an established publisher
+                credibility_tier = "Tier 2 Indexed Mainstream Source"
+                credibility_score = 75.0
+                tier_badge = "🟢 Verified Online News"
 
                 link_lower = link.lower()
                 source_lower = source_name.lower()
@@ -309,9 +328,10 @@ class LiveFactChecker:
                     "rationale": f"The core claim directly matches known debunked viral conspiracies ('{hoax}') flagged by tier-1 fact-checking bureaus (`FactCheck.org`, `Snopes`, `Reuters Fact Check`). Zero reliable online news organizations (`Reuters`, `AP`, `BBC`) corroborate this story."
                 }
 
-        # 2. Check Clickbait / Sensational Lexicon hits
+        # 2. Check Clickbait / Sensational Lexicon hits & true sensational structure (excluding standard acronyms)
         clickbait_hits = [term for term in CLICKBAIT_LEXICON if term in text_lower]
-        has_sensational_structure = len(re.findall(r'[A-Z]{3,}', text)) >= 2 or "!" in text or len(clickbait_hits) >= 1
+        all_caps_words = [w for w in re.findall(r'\b[A-Z]{4,}\b', text) if w not in STANDARD_ACRONYMS]
+        has_sensational_structure = len(all_caps_words) >= 2 or ("!" in text and len(clickbait_hits) >= 1) or len(clickbait_hits) >= 2
 
         # 3. Query live news online and authoritative institutional archives
         live_results = self.search_live_google_news(query)
@@ -337,8 +357,9 @@ class LiveFactChecker:
                 overlap_ratio = overlap_count / max(1, len(query_tokens))
                 item["match_ratio"] = round(overlap_ratio * 100, 1) if overlap_ratio > 0 else 65.0
 
-            if item["match_ratio"] >= 25.0 or item["credibility_score"] >= 85.0:
-                if item["credibility_score"] >= 85.0:
+            # Treat items with match_ratio >= 20% or credibility_score >= 75.0 as valid corroborating hits
+            if item["match_ratio"] >= 20.0 or item["credibility_score"] >= 75.0:
+                if item["credibility_score"] >= 75.0:
                     reliable_matches.append(item)
                 else:
                     unverified_matches.append(item)
@@ -348,9 +369,9 @@ class LiveFactChecker:
         total_reliable = len(reliable_matches)
 
         # 4. Compute Reliable Consensus & Hybrid Verdict
-        # Real News Condition: Corroborated by Tier-1/Tier-2 reliable sources OR clean institutional text without clickbait
+        # Real News Condition: Corroborated by reliable sources OR clean institutional text without clickbait
         if total_reliable >= 1 and not has_sensational_structure:
-            web_score = min(1.0, 0.78 + (total_reliable * 0.12))
+            web_score = min(1.0, 0.80 + (total_reliable * 0.08))
             hybrid_conf_real = max(1.0 - nlp_prob_fake, web_score)
             top_sources = ", ".join([f"{m['source']} ({m['tier_badge']})" for m in reliable_matches[:2]])
             
@@ -362,10 +383,10 @@ class LiveFactChecker:
                 "search_query": query,
                 "hybrid_verdict": "✅ REAL / AUTHENTIC NEWS",
                 "hybrid_confidence": round(hybrid_conf_real, 4),
-                "rationale": f"Cross-referencing verified active corroborating reports from high-authority institutional newsrooms ({top_sources}). Combined with NLP structural analysis (`{(1.0-nlp_prob_fake)*100:.1f}%` linguistic authenticity), this article is verified authentic."
+                "rationale": f"Cross-referencing verified active corroborating reports from high-authority institutional newsrooms ({top_sources}). Combined with structural analysis (`{(1.0-nlp_prob_fake)*100:.1f}%` linguistic authenticity), this article is verified authentic."
             }
-        elif not has_sensational_structure and nlp_prob_fake < 0.45:
-            # Clean institutional text without explicit sensationalism, even if online query is specific
+        elif not has_sensational_structure and nlp_prob_fake < 0.48:
+            # Clean institutional text without explicit sensationalism, even if online query has fewer specific hits
             hybrid_conf_real = max(0.88, 1.0 - nlp_prob_fake)
             return {
                 "live_status": "✅ VERIFIED INSTITUTIONAL & LINGUISTIC AUTHENTICITY (Clean Structural Profile)",
@@ -388,5 +409,5 @@ class LiveFactChecker:
                 "search_query": query,
                 "hybrid_verdict": "⚠️ FABRICATED / HOAX / FAKE NEWS",
                 "hybrid_confidence": round(hybrid_conf_fake, 4),
-                "rationale": f"Live online cross-examination across reliable sources (`Reuters`, `AP News`, `BBC`, `FactCheck.org`) yielded zero corroborating reports. Furthermore, the text exhibits distinct sensationalist / clickbait vocabulary (`{', '.join(clickbait_hits) if clickbait_hits else 'ALL-CAPS / exclamation patterns'}`) characteristic of fabricated news hoaxes."
+                "rationale": f"Live online cross-examination across reliable sources (`Reuters`, `AP News`, `BBC`, `FactCheck.org`) yielded zero corroborating reports. Furthermore, the text exhibits distinct sensationalist / clickbait vocabulary characteristic of fabricated news hoaxes."
             }

@@ -60,13 +60,24 @@ TIER_2_MAINSTREAM_NEWS = {
     "wired.com": "Wired Magazine (Tier 2 Credible News)"
 }
 
-# Known hoax / conspiracy keyword triggers for immediate flagging
+# Expanded Hoax, Clickbait, & Conspiracy triggers for zero-tolerance flagging
 HOAX_TRIGGERS = {
-    "mind control microchips", "drinking apple cider vinegar mixed with baking soda instantly",
+    "mind control microchips", "drinking apple cider vinegar mixed with baking soda",
     "hollow earth reptilian", "secret government cabal caught putting",
-    "5g cell towers confirmed to transmit mind-altering", "ancient mayan tablet proves end of the world next friday",
-    "celebrities caught drinking secret synthetic chemical to stay immortal",
-    "scientists admit the earth is actually hollow"
+    "5g cell towers confirmed to transmit mind-altering", "ancient mayan tablet proves end of the world",
+    "celebrities caught drinking secret synthetic chemical",
+    "scientists admit the earth is actually hollow", "miracle cure drinking apple cider",
+    "mainstream media is desperately hiding from you", "wake up sheeple",
+    "secret mind-control chemicals are being injected", "cures everything overnight without any prescription",
+    "corrupt doctors will lie to your face", "independent truth seekers have uncovered undeniable proof"
+}
+
+CLICKBAIT_LEXICON = {
+    "shocking", "miracle cure", "secret government", "mind control", "microchips",
+    "cabal", "reptilian", "hollow earth", "leaked audio confirms", "undeniable proof",
+    "wake up sheeple", "censors delete", "mainstream media is desperately hiding",
+    "corrupt doctors", "truth seekers", "unbelievable", "illuminati", "flat earth",
+    "synthetic chemical", "instant cure", "home remedy cures everything"
 }
 
 
@@ -87,7 +98,7 @@ class LiveFactChecker:
             return ""
         first_sentence = text.split(".")[0].split("\n")[0]
         clean_q = re.sub(r'[^a-zA-Z0-9\s]', ' ', first_sentence)
-        stopwords = {"the", "and", "for", "that", "this", "with", "from", "after", "over", "into", "during", "held", "today"}
+        stopwords = {"the", "and", "for", "that", "this", "with", "from", "after", "over", "into", "during", "held", "today", "when", "about", "have", "been", "were", "they"}
         tokens = [w for w in clean_q.split() if len(w) > 2 and w.lower() not in stopwords][:10]
         return " ".join(tokens)
 
@@ -174,12 +185,14 @@ class LiveFactChecker:
     def verify_against_ongoing_news(self, text: str, nlp_prob_fake: float) -> Dict[str, Any]:
         """
         Performs multi-stage reliable online source cross-referencing and returns a verified Hybrid Verdict.
+        Implements strict zero-tolerance rules against uncorroborated sensationalist or clickbait claims.
         """
         query = self.extract_search_query(text)
         logger.info(f"Cross-referencing against reliable online sources with query: '{query}'")
 
-        # 1. Check direct hoax / conspiracy databases
         text_lower = text.lower()
+
+        # 1. Check direct hoax / conspiracy databases
         for hoax in HOAX_TRIGGERS:
             if hoax in text_lower:
                 return {
@@ -188,12 +201,16 @@ class LiveFactChecker:
                     "matched_articles": [],
                     "reliable_sources_found": [],
                     "search_query": query,
-                    "hybrid_verdict": "⚠️ FABRICATED / HOAX",
+                    "hybrid_verdict": "⚠️ FABRICATED / HOAX / FAKE NEWS",
                     "hybrid_confidence": max(nlp_prob_fake, 0.999),
                     "rationale": f"The core claim directly matches known debunked viral conspiracies ('{hoax}') flagged by tier-1 fact-checking bureaus (`FactCheck.org`, `Snopes`, `Reuters Fact Check`). Zero reliable online news organizations (`Reuters`, `AP`, `BBC`) corroborate this story."
                 }
 
-        # 2. Query live news online
+        # 2. Check Clickbait / Sensational Lexicon hits
+        clickbait_hits = [term for term in CLICKBAIT_LEXICON if term in text_lower]
+        has_sensational_structure = len(re.findall(r'[A-Z]{3,}', text)) >= 2 or "!" in text or len(clickbait_hits) >= 1
+
+        # 3. Query live news online
         live_results = self.search_live_google_news(query)
 
         # Calculate semantic/keyword overlap and sort by domain credibility
@@ -219,10 +236,9 @@ class LiveFactChecker:
         reliable_matches.sort(key=lambda x: (x["credibility_score"], x.get("match_ratio", 0)), reverse=True)
 
         total_reliable = len(reliable_matches)
-        total_unverified = len(unverified_matches)
 
-        # 3. Compute Reliable Consensus & Hybrid Verdict
-        if total_reliable >= 1:
+        # 4. Compute Reliable Consensus & Hybrid Verdict
+        if total_reliable >= 1 and not has_sensational_structure:
             web_score = min(1.0, 0.75 + (total_reliable * 0.15))
             hybrid_conf_real = max(1.0 - nlp_prob_fake, web_score)
             
@@ -239,27 +255,42 @@ class LiveFactChecker:
                 "rationale": f"Online cross-referencing verified active corroborating reports from high-authority reliable newsrooms ({top_sources}). Combined with NLP structural analysis (`{(1.0-nlp_prob_fake)*100:.1f}%` linguistic authenticity), this article is verified authentic."
             }
         else:
-            # Zero matches from Tier 1 or Tier 2 reliable sources
-            web_score = 0.0
-            hybrid_conf_fake = max(nlp_prob_fake, 0.88 if nlp_prob_fake > 0.5 else 0.55)
-            hybrid_conf_real = 1.0 - hybrid_conf_fake
-
-            if nlp_prob_fake >= 0.5:
-                verdict = "⚠️ FAKE / UNVERIFIED CLAIM"
-                status = "❌ NO RELIABLE ONLINE SOURCES CORROBORATE THIS CLAIM (High Probability of Fabrication)"
-                rationale = f"Live cross-examination across online reliable sources (`Reuters`, `AP News`, `BBC`, `FactCheck.org`) using query (`'{query}'`) yielded zero corroborating reports from trusted institutions. Internal NLP syntactic assessment confirms sensational/unverified text features."
+            # Zero matches from Tier 1 or Tier 2 reliable sources OR contains clickbait/sensational structure!
+            if total_reliable == 0 and (has_sensational_structure or nlp_prob_fake >= 0.35 or len(clickbait_hits) >= 1):
+                hybrid_conf_fake = max(nlp_prob_fake, 0.96 if has_sensational_structure else 0.88)
+                return {
+                    "live_status": "❌ ZERO RELIABLE ONLINE SOURCES CORROBORATE THIS CLAIM (Sensational / Fabricated Structure)",
+                    "web_match_score": 0.0,
+                    "matched_articles": unverified_matches[:3],
+                    "reliable_sources_found": [],
+                    "search_query": query,
+                    "hybrid_verdict": "⚠️ FABRICATED / HOAX / FAKE NEWS",
+                    "hybrid_confidence": round(hybrid_conf_fake, 4),
+                    "rationale": f"Live online cross-examination across reliable sources (`Reuters`, `AP News`, `BBC`, `FactCheck.org`) yielded zero corroborating reports. Furthermore, the text exhibits distinct sensationalist / clickbait vocabulary (`{', '.join(clickbait_hits) if clickbait_hits else 'ALL-CAPS / exclamation patterns'}`) characteristic of fabricated news hoaxes."
+                }
+            elif total_reliable == 0:
+                # No matches at all and no explicit clickbait trigger
+                hybrid_conf_fake = max(nlp_prob_fake, 0.85 if nlp_prob_fake >= 0.40 else 0.65)
+                return {
+                    "live_status": "🔍 ZERO RELIABLE WIRE MATCHES FOUND ONLINE (Unverified Claim)",
+                    "web_match_score": 0.0,
+                    "matched_articles": unverified_matches[:3],
+                    "reliable_sources_found": [],
+                    "search_query": query,
+                    "hybrid_verdict": "⚠️ UNVERIFIED / POTENTIALLY FAKE NEWS",
+                    "hybrid_confidence": round(hybrid_conf_fake, 4),
+                    "rationale": f"No corroborating institutional reports found on verified Tier-1/Tier-2 news wires (`{query}`). Without credible online source confirmation, this claim cannot be authenticated as real news."
+                }
             else:
-                verdict = "ℹ️ UNVERIFIED BY ONLINE RELIABLE SOURCES"
-                status = "🔍 ZERO RELIABLE WIRE MATCHES FOUND ONLINE (Relying on NLP Structural Assessment)"
-                rationale = f"No immediate reports found on reliable Tier-1/Tier-2 news wires (`{query}`), but internal NLP syntactic evaluation indicates formal institutional writing conventions (`{(1.0-nlp_prob_fake)*100:.1f}%` authenticity score)."
-
-            return {
-                "live_status": status,
-                "web_match_score": round(web_score * 100, 1),
-                "matched_articles": unverified_matches[:3],
-                "reliable_sources_found": [],
-                "search_query": query,
-                "hybrid_verdict": verdict,
-                "hybrid_confidence": round(hybrid_conf_fake if nlp_prob_fake >= 0.5 else hybrid_conf_real, 4),
-                "rationale": rationale
-            }
+                # Has reliable matches BUT has sensational wording -> caution verification
+                web_score = min(1.0, 0.65 + (total_reliable * 0.15))
+                return {
+                    "live_status": f"✅ CORROBORATED BY {total_reliable} RELIABLE SOURCES (Sensationalist Headline Style)",
+                    "web_match_score": round(web_score * 100, 1),
+                    "matched_articles": (reliable_matches + unverified_matches)[:5],
+                    "reliable_sources_found": reliable_matches[:4],
+                    "search_query": query,
+                    "hybrid_verdict": "✅ REAL / AUTHENTIC NEWS",
+                    "hybrid_confidence": round(max(0.85, 1.0 - nlp_prob_fake), 4),
+                    "rationale": f"Although the headline uses sensational formatting, the underlying events are directly confirmed by verified Tier-1 wire desks ({', '.join([m['source'] for m in reliable_matches[:2]])})."
+                }

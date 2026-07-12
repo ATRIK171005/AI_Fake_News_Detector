@@ -18,6 +18,7 @@ This repository contains an **AI-Based Fake News Detection System** engineered t
 * Applied **TF-IDF vectorization (`max_features=5000, ngrams=1-2`)** for high-dimensional feature extraction and trained multiple classifiers including **Logistic Regression**, **Multinomial Naive Bayes**, **Random Forest**, and **Passive Aggressive Classifier**.
 * Evaluated model performance across **Accuracy ($100.0\%$)**, **Precision ($100.0\%$)**, **Recall ($100.0\%$)**, **F1-score ($100.0\%$)**, and **ROC-AUC ($1.000$)**, benchmarking cross-algorithm trade-offs.
 * Engineered a **LIME-like Decision Explainability Engine** that computes exact feature contributions (`word * tfidf_weight * model_coefficient`) to highlight top keywords driving classifications toward Fake vs. Real news.
+* Built a **Live Ongoing News Fact-Checking Engine (`live_fact_checker.py`)** querying live Google News RSS & trusted institutional feeds (`Reuters`, `BBC`, `AP News`) to dynamically verify ongoing real-world claims and produce a unified **Hybrid Verification Verdict**.
 * Deployed a responsive **6-tab Streamlit Enterprise Web Dashboard** integrated with a **3NF normalized SQLite audit database** (`PredictionAudit`, `UserFeedback`, `Models`) for real-time human verification.
 
 ---
@@ -27,6 +28,7 @@ This repository contains an **AI-Based Fake News Detection System** engineered t
 ```mermaid
 graph TD
     UI[🎮 Streamlit Enterprise Dashboard<br/>app.py | 6 Interactive Tabs] --> NLP[🧹 TextPreprocessor Engine<br/>nlp_pipeline.py]
+    UI <--> LIVE[🌐 Live Ongoing News Fact-Checker<br/>live_fact_checker.py | Google News RSS & Trusted APIs]
     
     subgraph Data & Persistence Layer
         CSV[📁 Benchmark Dataset<br/>sample_data/real_vs_fake.csv] --> TRAIN[🤖 ModelTrainer Engine<br/>model_trainer.py]

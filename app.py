@@ -2,7 +2,9 @@
 app.py
 ------
 Streamlit Enterprise Web Dashboard for the AI-Based Fake News Detection System.
-Implements the exact Google Stitch Dark Cyber Aesthetic HTML/Tailwind UI template.
+Implements the exact Google Stitch Dark Cyber Aesthetic HTML/Tailwind UI template with
+Editorial & Cyberpunk Typography (`DM Serif Display` & `Playfair Display` for eye-catching headings,
+`Inter` sans-serif for body text, and `JetBrains Mono` for live data metrics).
 Integrates real-time NLP classification, Reliable Online Source Cross-Checking (`Tier 1 Wires` & `FactCheck Bureaus`),
 TF-IDF feature explainability, multi-algorithm benchmarking (ROC-AUC & Confusion Matrix),
 and SQLite 3NF relational audit monitoring.
@@ -34,16 +36,16 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom Streamlit CSS matching the Google Stitch Dark Cyber Aesthetic
+# Custom Streamlit CSS matching Editorial Display Serif Headings + Sans-Serif Body
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
     
     /* Global Background matching Google Stitch #0a0d14 */
     .stApp {
         background-color: #0a0d14 !important;
         color: #e1e2ec !important;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Inter', sans-serif !important;
     }
     
     /* Hide standard Streamlit header chrome */
@@ -64,8 +66,9 @@ st.markdown("""
     .stButton>button {
         background: linear-gradient(135deg, #418fff 0%, #005cba 100%) !important;
         color: #f7fff1 !important;
-        font-family: 'Outfit', sans-serif !important;
-        font-weight: 700 !important;
+        font-family: 'DM Serif Display', 'Playfair Display', serif !important;
+        font-size: 15px !important;
+        letter-spacing: 0.5px !important;
         border-radius: 8px !important;
         border: none !important;
         box-shadow: 0 0 20px rgba(65, 143, 255, 0.3) !important;
@@ -219,7 +222,6 @@ exp_results = explain_prediction(cleaned_str, vectorizer, active_model, top_k=5)
 database.log_prediction(selected_model_name, user_text, cleaned_str, live_result["hybrid_verdict"], live_result["hybrid_confidence"])
 
 # Prepare dynamically computed variables for Google Stitch HTML template
-# Strict Check: If hybrid verdict contains FAKE, FABRICATED, HOAX, UNVERIFIED, or if prob_fake >= 0.40 -> Flag as FAKE
 is_fake = (
     "FAKE" in live_result["hybrid_verdict"]
     or "FABRICATED" in live_result["hybrid_verdict"]
@@ -305,7 +307,7 @@ stitch_full_html = f"""<!DOCTYPE html>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>VeriTruth AI | Live Verification Command Center</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>
     body {{
@@ -314,6 +316,12 @@ stitch_full_html = f"""<!DOCTYPE html>
         -webkit-font-smoothing: antialiased;
         margin: 0;
         padding: 0;
+        font-family: 'Inter', sans-serif;
+    }}
+    /* Apply eye-catching Serif Display font to all headings and titles */
+    h1, h2, h3, h4, .font-headline-serif {{
+        font-family: 'DM Serif Display', 'Playfair Display', serif !important;
+        letter-spacing: -0.01em;
     }}
     .glass-panel {{
         background: rgba(22, 29, 43, 0.8);
@@ -367,11 +375,11 @@ stitch_full_html = f"""<!DOCTYPE html>
                     "surface-container-high": "#272a32"
                 }},
                 "fontFamily": {{
-                    "headline-md": ["Outfit"],
-                    "body-lg": ["Inter"],
-                    "metric-xl": ["JetBrains Mono"],
-                    "body-md": ["Inter"],
-                    "label-mono": ["JetBrains Mono"]
+                    "headline-md": ["DM Serif Display", "Playfair Display", "serif"],
+                    "body-lg": ["Inter", "sans-serif"],
+                    "metric-xl": ["JetBrains Mono", "monospace"],
+                    "body-md": ["Inter", "sans-serif"],
+                    "label-mono": ["JetBrains Mono", "monospace"]
                 }}
             }}
         }}
@@ -383,9 +391,9 @@ stitch_full_html = f"""<!DOCTYPE html>
 <!-- TopNavBar -->
 <header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-surface/90 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm">
     <div class="flex items-center gap-4">
-        <span class="font-headline-md text-2xl font-bold text-primary tracking-tighter">VeriTruth AI</span>
+        <span class="font-headline-md text-3xl font-bold text-primary tracking-tight">VeriTruth AI</span>
         <div class="hidden md:flex ml-8 gap-6">
-            <a class="font-body-md text-primary border-b-2 border-primary pb-1 font-semibold" href="#">Live Command Center</a>
+            <a class="font-headline-md text-lg text-primary border-b-2 border-primary pb-1 font-semibold" href="#">Live Command Center</a>
             <span class="text-on-surface-variant text-xs font-label-mono self-center px-2 py-1 bg-surface-variant/40 rounded">Model: {selected_model_name}</span>
         </div>
     </div>
@@ -409,8 +417,8 @@ stitch_full_html = f"""<!DOCTYPE html>
                 <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">security</span>
             </div>
             <div>
-                <div class="text-on-surface font-bold">System Controls</div>
-                <div class="text-[10px] text-secondary uppercase tracking-widest flex items-center gap-1">
+                <div class="text-on-surface font-headline-md text-base">System Controls</div>
+                <div class="text-[10px] text-secondary uppercase tracking-widest flex items-center gap-1 font-label-mono">
                     <span class="w-1.5 h-1.5 bg-secondary rounded-full"></span> Tier-1 Connected
                 </div>
             </div>
@@ -418,31 +426,31 @@ stitch_full_html = f"""<!DOCTYPE html>
         <nav class="flex flex-col gap-1">
             <a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary border-r-2 border-primary transition-all font-semibold" href="#">
                 <span class="material-symbols-outlined text-[20px]">security</span>
-                <span>Live Verification</span>
+                <span class="font-body-md font-medium">Live Verification</span>
             </a>
             <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-all duration-200" href="#">
                 <span class="material-symbols-outlined text-[20px]">psychology</span>
-                <span>Explainability</span>
+                <span class="font-body-md font-medium">Explainability</span>
             </a>
             <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-all duration-200" href="#">
                 <span class="material-symbols-outlined text-[20px]">query_stats</span>
-                <span>Benchmarks</span>
+                <span class="font-body-md font-medium">Benchmarks</span>
             </a>
             <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-all duration-200" href="#">
                 <span class="material-symbols-outlined text-[20px]">travel_explore</span>
-                <span>N-Gram Explorer</span>
+                <span class="font-body-md font-medium">N-Gram Explorer</span>
             </a>
             <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-all duration-200" href="#">
                 <span class="material-symbols-outlined text-[20px]">database</span>
-                <span>Audit Logs</span>
+                <span class="font-body-md font-medium">Audit Logs</span>
             </a>
         </nav>
         <div class="mt-auto pt-6 border-t border-outline-variant/10">
             <div class="bg-surface-container rounded-lg p-4 mb-4 border border-outline-variant/20">
-                <div class="text-[10px] text-on-surface-variant uppercase mb-2">Engine Pulse</div>
+                <div class="text-[10px] text-on-surface-variant uppercase mb-2 font-label-mono">Engine Pulse</div>
                 <div class="flex items-center justify-between mb-1">
-                    <span class="text-on-surface font-bold text-[11px]">ACTIVE CLASSIFIER</span>
-                    <span class="text-secondary text-[11px]">99%</span>
+                    <span class="text-on-surface font-headline-md text-xs">ACTIVE CLASSIFIER</span>
+                    <span class="text-secondary font-metric-xl text-xs">99%</span>
                 </div>
                 <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
                     <div class="bg-secondary h-full w-[99%]"></div>
@@ -456,21 +464,21 @@ stitch_full_html = f"""<!DOCTYPE html>
 <main class="ml-64 mt-16 p-6 h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar">
     <div class="max-w-[1400px] mx-auto flex flex-col gap-6">
         
-        <!-- Tab Navigation Header -->
+        <!-- Tab Navigation Header with Eye-Catching Display Serif -->
         <div class="flex items-center gap-2 border-b border-outline-variant/20 pb-0 overflow-x-auto whitespace-nowrap">
-            <button class="px-6 py-3 border-b-2 border-primary text-primary font-headline-md text-sm uppercase tracking-wider flex items-center gap-2 transition-all font-bold">
+            <button class="px-6 py-3 border-b-2 border-primary text-primary font-headline-md text-base uppercase tracking-wider flex items-center gap-2 transition-all">
                 <span class="material-symbols-outlined text-[18px]">warning</span> 🚨 Live Article Verification
             </button>
-            <button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-headline-md text-sm uppercase tracking-wider flex items-center gap-2 transition-all">
+            <button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-headline-md text-base uppercase tracking-wider flex items-center gap-2 transition-all">
                 <span class="material-symbols-outlined text-[18px]">psychology</span> 🧠 Word-Level Explainability
             </button>
-            <button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-headline-md text-sm uppercase tracking-wider flex items-center gap-2 transition-all">
+            <button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-headline-md text-base uppercase tracking-wider flex items-center gap-2 transition-all">
                 <span class="material-symbols-outlined text-[18px]">leaderboard</span> 📊 Algorithm Benchmarks & ROC
             </button>
-            <button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-headline-md text-sm uppercase tracking-wider flex items-center gap-2 transition-all">
+            <button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-headline-md text-base uppercase tracking-wider flex items-center gap-2 transition-all">
                 <span class="material-symbols-outlined text-[18px]">manage_search</span> 🔍 N-Gram Explorer
             </button>
-            <button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-headline-md text-sm uppercase tracking-wider flex items-center gap-2 transition-all">
+            <button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-headline-md text-base uppercase tracking-wider flex items-center gap-2 transition-all">
                 <span class="material-symbols-outlined text-[18px]">list_alt</span> 🗄️ SQL Audit Logs
             </button>
         </div>
@@ -515,7 +523,7 @@ stitch_full_html = f"""<!DOCTYPE html>
             <!-- LIME Word-Level Log-Odds Side Panel -->
             <div class="col-span-12 lg:col-span-12 xl:col-span-3">
                 <div class="glass-panel rounded-xl p-5 h-full flex flex-col">
-                    <h3 class="font-headline-md text-[12px] text-on-surface-variant uppercase tracking-widest mb-4 flex items-center justify-between">
+                    <h3 class="font-headline-md text-base text-on-surface uppercase tracking-wider mb-4 flex items-center justify-between">
                         LIME Word Log-Odds
                         <span class="material-symbols-outlined text-primary text-[16px]">info</span>
                     </h3>
@@ -544,7 +552,7 @@ stitch_full_html = f"""<!DOCTYPE html>
                             </div>
                         </div>
                     </div>
-                    <div class="px-6 py-2.5 rounded-full {verdict_badge_class} font-headline-md text-sm font-bold uppercase tracking-widest mb-6">
+                    <div class="px-6 py-2.5 rounded-full {verdict_badge_class} font-headline-md text-base font-bold uppercase tracking-widest mb-6">
                         {verdict_text}
                     </div>
                     <div class="grid grid-cols-2 gap-8 w-full mt-2">
@@ -566,7 +574,7 @@ stitch_full_html = f"""<!DOCTYPE html>
                     <div>
                         <div class="flex items-center gap-2 mb-6 border-b border-outline-variant/20 pb-4">
                             <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">verified_user</span>
-                            <h2 class="font-headline-md text-[16px] text-on-surface font-semibold">Corroborating Reports on Verified Online Whitelists</h2>
+                            <h2 class="font-headline-md text-xl text-on-surface font-bold">Corroborating Reports on Verified Online Whitelists</h2>
                         </div>
                         <div class="flex flex-col gap-3">
                             {citations_html}

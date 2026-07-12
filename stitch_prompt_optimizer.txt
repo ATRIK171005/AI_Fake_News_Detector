@@ -1,0 +1,52 @@
+Build a state-of-the-art, ultra-premium Dark Mode Enterprise Logistics & Supply Chain Command Center web application inspired by Maersk's industrial maritime aesthetic combined with Palantir Foundry cyberpunk data density. The application is called "LogiSphere AI | Autonomous Fleet & Supply Chain Optimizer".
+
+# DESIGN SYSTEM & AESTHETICS (STRICT REQUIREMENTS):
+- Framework: Pure HTML5 with Tailwind CSS (using Tailwind CDN with custom extended colors & container queries).
+- Dark Mode Default: Use a deep obsidian maritime navy background (#0a0e17) with slate glassmorphic surface panels (rgba(22, 30, 46, 0.85)) and subtle glowing cyan borders (border-primary/30).
+- Color Palette (Maersk Cyber-Industrial Theme):
+  * Primary Accent (Maersk Electric Ice Blue): #1e88e5 / #40a9ff (used for active routes, primary buttons, and vessel icons).
+  * Secondary Accent (Optimization Green): #00e676 (used for CO2 reductions, fuel savings, and optimized status badges).
+  * Warning/Delay Accent (Maritime Amber): #ffab00 (used for port congestion, weather warnings, and route deviations).
+  * Surface Containers: #121824 and #1a2232 with subtle backdrop-blur-xl.
+- Typography: Import 'Plus Jakarta Sans' for ultra-clean geometric body text and 'JetBrains Mono' for all logistics coordinates, waybill IDs, ETAs, and financial/carbon metrics. Use bold industrial hierarchy with tight letter spacing (-0.01em) for headings.
+
+# CORE LAYOUT ARCHITECTURE:
+
+1. TOP NAVIGATION HEADER (Fixed, Glassmorphic):
+   - Brand Logo: Glowing maritime ship wheel / AI node icon with bold title "LogiSphere AI" and subtitle "Global Supply Chain Optimization Engine v4.2".
+   - Center Navigation Tabs: [🛰️ Global Fleet Telemetry] (Active), [⚡ AI Route Optimizer], [🌱 Carbon & ESG Tracker], [🗄️ Waybill Database], [⚙️ Simulation Sandbox].
+   - Right Controls: Global search bar ("Search Waybill ID, Vessel Name, or Port Code..."), live system latency indicator ("14ms | Satellite Feed Active"), and an emergency "PAUSE AUTONOMOUS DISPATCH" red pill switch.
+
+2. LEFT SIDEBAR (Logistics Filter & AI Constraint Panel):
+   - Transport Modality Toggles: Checkboxes with count badges for [🚢 Maritime Container Ships (842)], [🚂 Intermodal Freight Rail (314)], and [🚛 Autonomous EV Trucks (1,209)].
+   - AI Optimization Objective Selector (Radio Buttons with visual sliders):
+     * 🟢 Maximize Carbon Reduction (CO2 Minimization Mode)
+     * 🔵 Minimize Total Transit Cost (Fuel & Toll Optimization)
+     * 🟡 Fastest Estimated Time of Arrival (Just-In-Time Priority)
+   - Dynamic Port Congestion Gauge: Visual radial status showing "Port of Singapore: 82% Capacity (Heavy Congestion)" and "Port of Rotterdam: 41% Capacity (Smooth Transit)".
+
+3. MAIN WORKSPACE (Grid Layout):
+
+   A. TOP HERO METRIC SCORECARDS (4 Glass Columns):
+      - Card 1: "Total CO2 Emissions Reduced (MT)" -> 14,892 MT (+34.2% optimized reduction vs baseline).
+      - Card 2: "Predictive Fuel Economy Savings" -> $1,420,500 USD saved across active fleet this month.
+      - Card 3: "Active Global Shipments" -> 2,365 Containers currently tracked via real-time GPS/IoT.
+      - Card 4: "On-Time Delivery Rate" -> 98.6% (AI Weather Rerouting Active).
+
+   B. CENTER INTERACTIVE GLOBAL ROUTE OPTIMIZATION MAP CARD:
+      - A large 16:9 industrial cyber-map mockup panel depicting major intercontinental sea shipping lanes (Asia-Europe and Transpacific).
+      - Show active glowing route trajectories: a dotted gray line for "Original Route (Suez Canal Delay -> 18 days)" vs an electric blue solid line for "AI Optimized Reroute (Cape of Good Hope with Speed Throttling -> 15.4 days, -18% Fuel)".
+      - Interactive Floating Vessel Overlay Box: "Vessel: Maersk Mc-Kinney Møller | Status: Cruising at 19.2 Knots | Waybill: #MSK-88219 | Next Port: Rotterdam (ETA: Jul 18, 14:00 UTC)".
+
+   C. RIGHT PANEL — AI DISPATCH RECOMMENDATIONS (Actionable Intelligence):
+      - Card 1 (High Priority Alert): "⚠️ Typhoon Approaching Port of Shanghai" -> Recommendation: "Reroute 14 container vessels via Port of Ningbo-Zhoushan. Est. Cost Impact: -$12,000 | Est. Time Saved: +38 Hours." [Include glowing button: "⚡ ACCEPT AI REROUTE"].
+      - Card 2 (Carbon Optimization): "🌱 Intermodal Rail Handoff Available at Hamburg Port" -> Recommendation: "Switch freight #MSK-4412 from diesel truck to electric freight rail. CO2 Reduction: -4.2 Tonnes." [Include button: "⚡ DISPATCH RAIL"].
+
+4. BOTTOM ROW — LIVE SHIPMENT WAYBILL & TELEMETRY AUDIT TABLE:
+   - A high-density industrial data table with columns: [Waybill ID], [Vessel / Carrier], [Origin Port -> Dest Port], [Current Coordinate / Status], [Optimized ETA], [Fuel Efficiency Score], and [Action].
+   - Populate with 4 sample rows showing realistic global shipping data (`#MSK-99104` Shenzen to Los Angeles, `#FLX-33012` Rotterdam to New York, etc.), formatted with colored pill badges (`🟢 OPTIMIZED ROUTE`, `🟡 REROUTING IN PROGRESS`).
+
+# INTERACTIVITY & MICRO-ANIMATIONS:
+- Add subtle pulse animations on active green/blue status indicators.
+- Include hover zoom effects and glowing neon borders around cards when focused.
+- Make all buttons feel tactile, responsive, and look like elite industrial command hardware.

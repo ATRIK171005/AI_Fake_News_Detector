@@ -2,8 +2,9 @@
 app.py
 ------
 Streamlit Enterprise Web Dashboard for the AI-Based Fake News Detection System.
-Implements a sleek dark corporate design system, interactive real-time NLP classification,
-Live Ongoing News & Reliable Online Source Cross-Checking (`Tier 1 Wires` & `FactCheck Bureaus`),
+Overhauled with the exact Google Stitch Dark AI Design System (`Glassmorphism`, `Neon Cyber Borders`,
+`Illuminated Status Badges`, `Sleek Command Center Layout`).
+Integrates real-time NLP classification, Reliable Online Source Cross-Checking (`Tier 1 Wires` & `FactCheck Bureaus`),
 TF-IDF feature explainability, multi-algorithm benchmarking (ROC-AUC & Confusion Matrix),
 and SQLite 3NF relational audit monitoring.
 """
@@ -26,136 +27,232 @@ from utils import get_logger
 logger = get_logger("StreamlitApp")
 
 # =====================================================================
-# Page Configuration & Design System
+# Page Configuration & Google Stitch Design System
 # =====================================================================
 st.set_page_config(
-    page_title="AI Fake News Detection Platform",
+    page_title="VeriTruth AI — Reliable Fact-Check & Detection Platform",
     page_icon="🚨",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Enterprise CSS (Maersk / Dark AI Aesthetic)
+# Custom Google Stitch Dark Cyberpunk & Glassmorphic CSS Overhaul
 st.markdown("""
 <style>
-    /* Global Background & Typography */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    /* Global Obsidian / Slate Background & Typography */
     .stApp {
-        background-color: #0d1117;
-        color: #c9d1d9;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-    
-    /* Header Styling */
-    .header-banner {
-        background: linear-gradient(135deg, #1f6feb 0%, #112a46 100%);
-        padding: 24px 32px;
-        border-radius: 12px;
-        border: 1px solid #30363d;
-        margin-bottom: 24px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-    .header-title {
-        font-size: 32px;
-        font-weight: 800;
-        color: #ffffff;
-        margin: 0;
-        letter-spacing: -0.5px;
-    }
-    .header-subtitle {
-        font-size: 15px;
-        color: #8b949e;
-        margin-top: 6px;
+        background-color: #07090e;
+        background-image: 
+            radial-gradient(at 10% 20%, rgba(31, 111, 235, 0.12) 0px, transparent 50%),
+            radial-gradient(at 90% 80%, rgba(218, 54, 51, 0.08) 0px, transparent 50%);
+        color: #e6edf3;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    /* KPI Card System */
+    /* Hide standard Streamlit header chrome */
+    header[data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+
+    /* Futuristic Google Stitch Top Header Command Bar */
+    .stitch-header {
+        background: rgba(18, 24, 38, 0.75);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(56, 139, 253, 0.3);
+        border-radius: 16px;
+        padding: 24px 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .stitch-header-left {
+        display: flex;
+        flex-direction: column;
+    }
+    .stitch-title {
+        font-size: 30px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ffffff 0%, #58a6ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0;
+        letter-spacing: -0.6px;
+    }
+    .stitch-subtitle {
+        font-size: 14px;
+        color: #8b949e;
+        margin-top: 6px;
+        font-weight: 400;
+    }
+    .stitch-status-badge {
+        background: rgba(46, 160, 67, 0.15);
+        border: 1px solid rgba(46, 160, 67, 0.5);
+        color: #3fb950;
+        padding: 8px 16px;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 0 15px rgba(46, 160, 67, 0.25);
+    }
+
+    /* Tabs Styling - Segmented Glass Switch */
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: rgba(22, 29, 43, 0.8);
+        border-radius: 12px;
+        padding: 6px;
+        border: 1px solid rgba(48, 54, 61, 0.8);
+        gap: 6px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: transparent;
+        border-radius: 8px;
+        color: #8b949e;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 10px 18px;
+        transition: all 0.2s ease;
+    }
+    .stTabs [data-baseweb="tab"][aria-selected="true"] {
+        background-color: #1f6feb;
+        color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(31, 111, 235, 0.4);
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #e6edf3;
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Glassmorphic Card Container */
+    .stitch-card {
+        background: rgba(18, 24, 38, 0.65);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(48, 54, 61, 0.8);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        margin-bottom: 20px;
+    }
+
+    /* KPI Counter Card System */
     .kpi-card {
-        background-color: #161b22;
-        border: 1px solid #30363d;
-        border-radius: 10px;
+        background: rgba(22, 29, 43, 0.7);
+        border: 1px solid rgba(56, 139, 253, 0.25);
+        border-radius: 14px;
         padding: 18px;
         text-align: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .kpi-card:hover {
-        transform: translateY(-2px);
+        transform: translateY(-3px);
         border-color: #58a6ff;
+        box-shadow: 0 8px 24px rgba(88, 166, 255, 0.2);
     }
     .kpi-title {
-        font-size: 13px;
+        font-size: 12px;
         text-transform: uppercase;
         color: #8b949e;
         font-weight: 600;
-        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
     }
     .kpi-value {
         font-size: 26px;
-        font-weight: 700;
-        color: #58a6ff;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        background: linear-gradient(135deg, #58a6ff 0%, #3fb950 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
-    
-    /* Classification Badges */
+
+    /* Classification Verdict Badges */
     .badge-fake {
-        background-color: rgba(248, 81, 73, 0.15);
+        background: linear-gradient(135deg, rgba(218, 54, 51, 0.2) 0%, rgba(139, 0, 0, 0.3) 100%);
         border: 2px solid #f85149;
         color: #ff7b72;
-        padding: 18px 24px;
-        border-radius: 10px;
-        font-size: 22px;
+        padding: 24px;
+        border-radius: 16px;
+        font-size: 24px;
         font-weight: 800;
         text-align: center;
-        box-shadow: 0 4px 15px rgba(248, 81, 73, 0.3);
+        box-shadow: 0 8px 32px rgba(248, 81, 73, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);
     }
     .badge-real {
-        background-color: rgba(46, 160, 67, 0.15);
-        border: 2px solid #2ea043;
-        color: #3fb950;
-        padding: 18px 24px;
-        border-radius: 10px;
-        font-size: 22px;
+        background: linear-gradient(135deg, rgba(46, 160, 67, 0.2) 0%, rgba(0, 100, 0, 0.3) 100%);
+        border: 2px solid #3fb950;
+        color: #56d364;
+        padding: 24px;
+        border-radius: 16px;
+        font-size: 24px;
         font-weight: 800;
         text-align: center;
-        box-shadow: 0 4px 15px rgba(46, 160, 67, 0.3);
+        box-shadow: 0 8px 32px rgba(46, 160, 67, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);
     }
-    
-    /* Live Citation Box */
+
+    /* Reliable Source Citation Box */
     .citation-box {
-        background-color: #161b22;
+        background: rgba(22, 29, 43, 0.85);
         border-left: 4px solid #58a6ff;
-        padding: 14px 18px;
-        margin-bottom: 12px;
-        border-radius: 6px;
-        border-top: 1px solid #30363d;
-        border-right: 1px solid #30363d;
-        border-bottom: 1px solid #30363d;
+        border-top: 1px solid rgba(48, 54, 61, 0.7);
+        border-right: 1px solid rgba(48, 54, 61, 0.7);
+        border-bottom: 1px solid rgba(48, 54, 61, 0.7);
+        padding: 16px 20px;
+        margin-bottom: 14px;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+    .citation-box:hover {
+        border-color: #58a6ff;
+        box-shadow: 0 4px 20px rgba(56, 139, 253, 0.2);
+        transform: translateX(4px);
     }
     .citation-title {
-        font-weight: 600;
+        font-weight: 700;
         color: #58a6ff;
         font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
     }
     .citation-meta {
         font-size: 13px;
         color: #8b949e;
-        margin-top: 6px;
+        margin-top: 8px;
+        font-family: 'JetBrains Mono', monospace;
     }
     .badge-tier1 {
-        background-color: rgba(46, 160, 67, 0.2);
-        color: #3fb950;
-        padding: 2px 8px;
-        border-radius: 12px;
+        background-color: rgba(46, 160, 67, 0.25);
+        color: #56d364;
+        padding: 4px 10px;
+        border-radius: 100px;
         font-size: 11px;
-        font-weight: 600;
-        border: 1px solid #2ea043;
+        font-weight: 700;
+        border: 1px solid #3fb950;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     .badge-tier2 {
-        background-color: rgba(56, 139, 253, 0.2);
-        color: #58a6ff;
-        padding: 2px 8px;
-        border-radius: 12px;
+        background-color: rgba(56, 139, 253, 0.25);
+        color: #79c0ff;
+        padding: 4px 10px;
+        border-radius: 100px;
         font-size: 11px;
-        font-weight: 600;
-        border: 1px solid #388bfd;
+        font-weight: 700;
+        border: 1px solid #58a6ff;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -208,17 +305,25 @@ fact_checker = get_live_fact_checker()
 benchmark_df = load_benchmark_dataset()
 
 # =====================================================================
-# Header Banner
+# Google Stitch Header Banner
 # =====================================================================
 st.markdown("""
-<div class="header-banner">
-    <div class="header-title">🚨 AI-Based Fake News Detection & Reliable Online Source Verification</div>
-    <div class="header-subtitle">Production-Grade Hybrid Verification Platform | TF-IDF NLP Classifiers • Tier 1 Reliable Source Check (`Reuters / AP / BBC / FactCheck.org`) • 3NF SQLite Audit</div>
+<div class="stitch-header">
+    <div class="stitch-header-left">
+        <div class="stitch-title">🚨 VeriTruth AI — Real-Time Fact Check & Detection</div>
+        <div class="stitch-subtitle">Google Stitch Cyber Aesthetic • Tier 1 Reliable Source Whitelists (`Reuters | AP | BBC`) • TF-IDF NLP Engine</div>
+    </div>
+    <div>
+        <div class="stitch-status-badge">
+            <span style="height:10px;width:10px;border-radius:50%;background-color:#3fb950;display:inline-block;box-shadow:0 0 10px #3fb950;"></span>
+            CONNECTED TO TIER-1 WIRES & SQLITE 3NF
+        </div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Sidebar
-st.sidebar.title("🎛️ System Controls")
+# Sidebar - Command Center Controls
+st.sidebar.markdown("### 🎛️ Command Center Settings")
 selected_model_name = st.sidebar.selectbox(
     "🤖 Active NLP Classifier Engine",
     list(models_dict.keys()),
@@ -235,10 +340,17 @@ live_check_enabled = st.sidebar.checkbox(
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🛡️ Online Whitelist Protection Tiers")
-st.sidebar.caption("• **Tier 1 Reliable Wires:** `Reuters`, `AP News`, `BBC`, `Bloomberg`, `NASA`, `WHO`\n• **Tier 1 Fact-Checkers:** `FactCheck.org`, `Snopes`, `PolitiFact`, `Reuters Fact Check`\n• **Tier 2 Credible News:** `NYTimes`, `WSJ`, `The Guardian`, `NPR`, `Al Jazeera`")
+st.sidebar.markdown("""
+<div style="font-size:12px; color:#8b949e; line-height:1.6; background:rgba(22,29,43,0.7); padding:12px; border-radius:8px; border:1px solid rgba(48,54,61,0.8);">
+    • <strong>⭐ Tier 1 Reliable Wires:</strong><br/><code>Reuters</code>, <code>AP News</code>, <code>BBC</code>, <code>Bloomberg</code>, <code>NASA</code>, <code>WHO</code><br/><br/>
+    • <strong>🛡️ Tier 1 Fact-Checkers:</strong><br/><code>FactCheck.org</code>, <code>Snopes</code>, <code>PolitiFact</code>, <code>Reuters Fact Check</code><br/><br/>
+    • <strong>🟢 Tier 2 Credible News:</strong><br/><code>NYTimes</code>, <code>WSJ</code>, <code>The Guardian</code>, <code>NPR</code>, <code>Al Jazeera</code>
+</div>
+""", unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-st.sidebar.caption("⚡ Built for Senior AI / NLP Engineer Portfolio | Dec 2025 - Jan 2026")
+if not benchmark_df.empty:
+    st.sidebar.caption(f"📁 Benchmark Corpus: `{len(benchmark_df):,}` balanced articles | ⚡ TF-IDF Features: `{len(vectorizer.get_feature_names_out()):,}`")
 
 
 # =====================================================================
@@ -257,12 +369,12 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 # Tab 1: Live Article & Reliable Online Source Verification
 # =====================================================================
 with tab1:
-    st.markdown("### ✍️ Input News Headline or Article Text to Verify against NLP & Reliable Online Sources (`Reuters`, `AP News`, `BBC`)")
+    st.markdown("#### ✍️ Input News Headline or Article Text to Verify against NLP & Reliable Online Sources (`Reuters`, `AP News`, `BBC`)")
     
     col_preset, _ = st.columns([3, 1])
     with col_preset:
         sample_choice = st.selectbox(
-            "📋 Or load a pre-configured sample article:",
+            "📋 Or pick a pre-loaded verification sample:",
             [
                 "-- Custom User Input --",
                 "🟢 [Real Sample - Economy] Federal Reserve announces 0.25 percentage point interest rate adjustment after inflation report",
@@ -293,9 +405,9 @@ with tab1:
         placeholder="Paste news headline or full article paragraphs here..."
     )
 
-    col_btn, col_stats = st.columns([1, 3])
+    col_btn, _ = st.columns([1, 2])
     with col_btn:
-        run_verify = st.button("⚡ Verify Authenticity & Check Sources", type="primary", use_container_width=True)
+        run_verify = st.button("⚡ Run Hybrid AI Verification & Fact-Check", type="primary", use_container_width=True)
 
     if run_verify or user_text:
         if not user_text.strip():
@@ -349,41 +461,40 @@ with tab1:
                     st.markdown(f"""
                     <div class="badge-fake">
                         {live_result['hybrid_verdict']}<br/>
-                        <span style="font-size: 15px; font-weight: 500;">Hybrid Confidence: {live_result['hybrid_confidence']*100:.1f}% | NLP Structural Fake Prob: {prob_fake*100:.1f}%</span>
+                        <span style="font-size: 15px; font-weight: 500; color:#ffb3ad;">Hybrid Confidence: {live_result['hybrid_confidence']*100:.1f}% | NLP Structural Fake Prob: {prob_fake*100:.1f}%</span>
                     </div>
                     """, unsafe_allow_html=True)
                 else:
                     st.markdown(f"""
                     <div class="badge-real">
                         {live_result['hybrid_verdict']}<br/>
-                        <span style="font-size: 15px; font-weight: 500;">Hybrid Confidence: {live_result['hybrid_confidence']*100:.1f}% | NLP Structural Real Prob: {prob_real*100:.1f}%</span>
+                        <span style="font-size: 15px; font-weight: 500; color:#a2f1b1;">Hybrid Confidence: {live_result['hybrid_confidence']*100:.1f}% | NLP Structural Real Prob: {prob_real*100:.1f}%</span>
                     </div>
                     """, unsafe_allow_html=True)
                 
-                st.markdown(f"**🛡️ Reliable Online Source Status:** `{live_result['live_status']}`")
-                st.markdown(f"**💡 Unified System Rationale:** {live_result['rationale']}")
+                st.markdown(f"<div style='margin-top:16px; font-size:15px;'><strong>🛡️ Reliable Online Source Status:</strong> <code>{live_result['live_status']}</code></div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='margin-top:8px; color:#8b949e; line-height:1.5;'><strong>💡 Unified System Rationale:</strong> {live_result['rationale']}</div>", unsafe_allow_html=True)
             
             with c_res2:
                 # Probability Gauge Chart
-                gauge_val = prob_fake * 100 if not live_check_enabled else (100 - live_result["web_match_score"] if is_fake_verdict else live_result["web_match_score"])
                 fig_gauge = go.Figure(go.Indicator(
                     mode="gauge+number",
                     value=prob_fake * 100,
-                    title={"text": f"NLP Fabrication Index (%)<br><span style='font-size:0.8em;color:gray'>Reliable Source Match: {live_result.get('web_match_score', 0)}%</span>", "font": {"size": 13, "color": "#8b949e"}},
+                    title={"text": f"NLP Fabrication Index (%)<br><span style='font-size:0.8em;color:#8b949e'>Reliable Source Match: {live_result.get('web_match_score', 0)}%</span>", "font": {"size": 14, "color": "#e6edf3"}},
                     gauge={
-                        "axis": {"range": [0, 100], "tickwidth": 1, "tickcolor": "#c9d1d9"},
-                        "bar": {"color": "#f85149" if prob_fake > 0.5 else "#2ea043"},
-                        "bgcolor": "#161b22",
+                        "axis": {"range": [0, 100], "tickwidth": 1, "tickcolor": "#8b949e"},
+                        "bar": {"color": "#f85149" if prob_fake > 0.5 else "#3fb950"},
+                        "bgcolor": "#161d2b",
                         "borderwidth": 2,
                         "bordercolor": "#30363d",
                         "steps": [
-                            {"range": [0, 30], "color": "rgba(46, 160, 67, 0.2)"},
-                            {"range": [30, 70], "color": "rgba(210, 153, 34, 0.2)"},
-                            {"range": [70, 100], "color": "rgba(248, 81, 73, 0.2)"}
+                            {"range": [0, 30], "color": "rgba(46, 160, 67, 0.25)"},
+                            {"range": [30, 70], "color": "rgba(210, 153, 34, 0.25)"},
+                            {"range": [70, 100], "color": "rgba(248, 81, 73, 0.25)"}
                         ]
                     }
                 ))
-                fig_gauge.update_layout(height=200, margin=dict(l=20, r=20, t=40, b=10), paper_bgcolor="rgba(0,0,0,0)", font_color="#c9d1d9")
+                fig_gauge.update_layout(height=210, margin=dict(l=20, r=20, t=40, b=10), paper_bgcolor="rgba(0,0,0,0)", font_color="#e6edf3")
                 st.plotly_chart(fig_gauge, use_container_width=True)
 
             # Display Reliable Online Source Audit Cards
@@ -395,7 +506,7 @@ with tab1:
                     <div class="citation-box">
                         <div class="citation-title">
                             <a href="{match['link']}" target="_blank" style="color:#58a6ff; text-decoration:none;">📰 {match['title']}</a>
-                            <span class="{badge_class}" style="margin-left:8px;">{match.get('tier_badge', '🟢 Verified')}</span>
+                            <span class="{badge_class}">{match.get('tier_badge', '🟢 Verified')}</span>
                         </div>
                         <div class="citation-meta">
                             <strong>Verified Domain:</strong> {match.get('credibility_tier', match['source'])} | 
@@ -427,7 +538,7 @@ with tab1:
 
             # Human-in-the-loop verification
             st.markdown("---")
-            st.markdown("#### 👥 Human-in-the-Loop Audit Verification (Logs directly to SQLite)")
+            st.markdown("#### 👥 Human-in-the-Loop Audit Verification (Logs directly to SQLite 3NF)")
             col_fb1, col_fb2, col_fb3 = st.columns([1, 1, 2])
             with col_fb1:
                 if st.button("👍 I Agree with Hybrid Verdict", key=f"agree_{audit_id}"):
@@ -447,7 +558,7 @@ with tab2:
     st.write("Understand exactly which vocabulary keywords pushed the model toward predicting **Fake News** versus **Real News** for your input text.")
     
     if not user_text.strip():
-        st.info("💡 Please input an article inside **Tab 1: Live Article & Reliable Online Source Verification** first to inspect word-level contributions.")
+        st.info("💡 Please input an article inside **Tab 1: Live & Reliable Source Verification** first to inspect word-level contributions.")
     else:
         cleaned_str = preprocessor.clean_text(user_text)
         exp_results = explain_prediction(cleaned_str, vectorizer, active_model, top_k=8)
@@ -466,7 +577,7 @@ with tab2:
                     df_fake, x="TF-IDF * Coefficient Score", y="Keyword Token", orientation="h",
                     color_discrete_sequence=["#f85149"]
                 )
-                fig_f.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#c9d1d9")
+                fig_f.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e6edf3")
                 st.plotly_chart(fig_f, use_container_width=True)
 
         with c_exp2:
@@ -478,9 +589,9 @@ with tab2:
                 df_real = pd.DataFrame(real_items, columns=["Keyword Token", "Authenticity Score (abs)"])
                 fig_r = px.bar(
                     df_real, x="Authenticity Score (abs)", y="Keyword Token", orientation="h",
-                    color_discrete_sequence=["#2ea043"]
+                    color_discrete_sequence=["#3fb950"]
                 )
-                fig_r.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#c9d1d9")
+                fig_r.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e6edf3")
                 st.plotly_chart(fig_r, use_container_width=True)
 
 
@@ -520,7 +631,7 @@ with tab3:
         
         fig_roc.update_layout(
             xaxis_title="False Positive Rate (FPR)", yaxis_title="True Positive Rate (TPR)",
-            height=340, margin=dict(l=20, r=20, t=30, b=20), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="#161b22", font_color="#c9d1d9",
+            height=340, margin=dict(l=20, r=20, t=30, b=20), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="#161d2b", font_color="#e6edf3",
             legend=dict(orientation="h", y=-0.2)
         )
         st.plotly_chart(fig_roc, use_container_width=True)
@@ -536,7 +647,7 @@ with tab3:
             color_continuous_scale="Blues",
             text_auto=True
         )
-        fig_cm.update_layout(height=340, margin=dict(l=20, r=20, t=30, b=20), paper_bgcolor="rgba(0,0,0,0)", font_color="#c9d1d9")
+        fig_cm.update_layout(height=340, margin=dict(l=20, r=20, t=30, b=20), paper_bgcolor="rgba(0,0,0,0)", font_color="#e6edf3")
         st.plotly_chart(fig_cm, use_container_width=True)
 
 
@@ -554,10 +665,10 @@ with tab4:
             benchmark_df["word_len"] = benchmark_df["text"].apply(lambda x: len(str(x).split()))
             fig_hist = px.histogram(
                 benchmark_df, x="word_len", color="label_name", barmode="overlay",
-                color_discrete_map={"Real": "#2ea043", "Fake": "#f85149"},
+                color_discrete_map={"Real": "#3fb950", "Fake": "#f85149"},
                 labels={"word_len": "Word Count per Article", "label_name": "Class"}
             )
-            fig_hist.update_layout(height=320, margin=dict(l=20, r=20, t=20, b=20), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="#161b22", font_color="#c9d1d9")
+            fig_hist.update_layout(height=320, margin=dict(l=20, r=20, t=20, b=20), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="#161d2b", font_color="#e6edf3")
             st.plotly_chart(fig_hist, use_container_width=True)
             
         with c_voc2:

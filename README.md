@@ -1,4 +1,4 @@
-# 🚨 AI-Based Fake News Detection System
+# 🚨 VeriTruth AI — Fake News Detection System
 **Production-Grade Natural Language Processing (NLP) & Text Classification Platform**
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -27,29 +27,29 @@ This repository contains an **AI-Based Fake News Detection System** engineered t
 
 ```mermaid
 graph TD
-    UI[🎮 Streamlit Enterprise Dashboard<br/>app.py | 6 Interactive Tabs] --> NLP[🧹 TextPreprocessor Engine<br/>nlp_pipeline.py]
-    UI <--> LIVE[🌐 Live Ongoing News Fact-Checker<br/>live_fact_checker.py | Google News RSS & Trusted APIs]
+    UI["🎮 Streamlit Enterprise Dashboard<br/>app.py — 6 Interactive Tabs"] --> NLP["🧹 TextPreprocessor Engine<br/>nlp_pipeline.py"]
+    UI <--> LIVE["🌐 Live Ongoing News Fact-Checker<br/>live_fact_checker.py — Google News RSS & Trusted APIs"]
     
     subgraph Data & Persistence Layer
-        CSV[📁 Benchmark Dataset<br/>sample_data/real_vs_fake.csv] --> TRAIN[🤖 ModelTrainer Engine<br/>model_trainer.py]
-        UI <--> DB[🗄️ SQLite 3NF Database<br/>database/fake_news_audit.db]
+        CSV["📁 Benchmark Dataset<br/>sample_data/real_vs_fake.csv"] --> TRAIN["🤖 ModelTrainer Engine<br/>model_trainer.py"]
+        UI <--> DB["🗄️ SQLite 3NF Database<br/>database/fake_news_audit.db"]
     end
 
     subgraph Feature Engineering & ML Models
-        NLP --> TFIDF[⚡ TF-IDF N-Gram Vectorizer<br/>max_features=5000 | 1-2 grams]
-        TFIDF --> LR[Logistic Regression<br/>C=1.5 | lbfgs]
-        TFIDF --> NB[Multinomial Naive Bayes<br/>alpha=0.1]
-        TFIDF --> RF[Random Forest<br/>100 estimators | depth=25]
-        TFIDF --> PA[Passive Aggressive<br/>max_iter=1000]
+        NLP --> TFIDF["⚡ TF-IDF N-Gram Vectorizer<br/>max_features=5000 — 1-2 grams"]
+        TFIDF --> LR["Logistic Regression<br/>C=1.5 — lbfgs"]
+        TFIDF --> NB["Multinomial Naive Bayes<br/>alpha=0.1"]
+        TFIDF --> RF["Random Forest<br/>100 estimators — depth=25"]
+        TFIDF --> PA["Passive Aggressive<br/>max_iter=1000"]
     end
 
-    LR --> EVAL[📈 ModelEvaluator Engine<br/>model_evaluator.py | Accuracy, F1, ROC-AUC]
+    LR --> EVAL["📈 ModelEvaluator Engine<br/>model_evaluator.py — Accuracy, F1, ROC-AUC"]
     NB --> EVAL
     RF --> EVAL
     PA --> EVAL
 
-    EVAL --> SAVE[💾 Serialized Joblib Artifacts<br/>saved_models/*.pkl]
-    TFIDF --> EXP[🧠 Explainability Engine<br/>explainability.py | TF-IDF Log-Odds]
+    EVAL --> SAVE["💾 Serialized Joblib Artifacts<br/>saved_models/*.pkl"]
+    TFIDF --> EXP["🧠 Explainability Engine<br/>explainability.py — TF-IDF Log-Odds"]
     LR --> EXP
     EXP --> UI
 ```

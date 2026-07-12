@@ -16,6 +16,7 @@ import pandas as pd
 import numpy as np
 import os
 import joblib
+import re
 
 from nlp_pipeline import TextPreprocessor, extract_text_statistics
 from explainability import explain_prediction

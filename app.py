@@ -3,7 +3,7 @@ app.py
 ------
 Streamlit Enterprise Web Dashboard for the AI-Based Fake News Detection System.
 Implements a sleek dark corporate design system, interactive real-time NLP classification,
-Live Ongoing News Cross-Referencing & Fact-Checking (`Google News RSS` / Trusted Outlets),
+Live Ongoing News & Reliable Online Source Cross-Checking (`Tier 1 Wires` & `FactCheck Bureaus`),
 TF-IDF feature explainability, multi-algorithm benchmarking (ROC-AUC & Confusion Matrix),
 and SQLite 3NF relational audit monitoring.
 """
@@ -122,19 +122,40 @@ st.markdown("""
     .citation-box {
         background-color: #161b22;
         border-left: 4px solid #58a6ff;
-        padding: 12px 16px;
-        margin-bottom: 10px;
-        border-radius: 4px;
+        padding: 14px 18px;
+        margin-bottom: 12px;
+        border-radius: 6px;
+        border-top: 1px solid #30363d;
+        border-right: 1px solid #30363d;
+        border-bottom: 1px solid #30363d;
     }
     .citation-title {
         font-weight: 600;
         color: #58a6ff;
-        font-size: 15px;
+        font-size: 16px;
     }
     .citation-meta {
-        font-size: 12px;
+        font-size: 13px;
         color: #8b949e;
-        margin-top: 4px;
+        margin-top: 6px;
+    }
+    .badge-tier1 {
+        background-color: rgba(46, 160, 67, 0.2);
+        color: #3fb950;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid #2ea043;
+    }
+    .badge-tier2 {
+        background-color: rgba(56, 139, 253, 0.2);
+        color: #58a6ff;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid #388bfd;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -191,8 +212,8 @@ benchmark_df = load_benchmark_dataset()
 # =====================================================================
 st.markdown("""
 <div class="header-banner">
-    <div class="header-title">🚨 AI-Based Fake News Detection & Ongoing News Fact-Check System</div>
-    <div class="header-subtitle">Production-Grade Hybrid Verification Platform | TF-IDF NLP Classifiers • Live Google News Cross-Referencing • 3NF SQLite Audit</div>
+    <div class="header-title">🚨 AI-Based Fake News Detection & Reliable Online Source Verification</div>
+    <div class="header-subtitle">Production-Grade Hybrid Verification Platform | TF-IDF NLP Classifiers • Tier 1 Reliable Source Check (`Reuters / AP / BBC / FactCheck.org`) • 3NF SQLite Audit</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -207,19 +228,14 @@ selected_model_name = st.sidebar.selectbox(
 active_model = models_dict[selected_model_name]
 
 live_check_enabled = st.sidebar.checkbox(
-    "🌐 Enable Live Ongoing News Cross-Check",
+    "🌐 Enable Reliable Online Source Fact-Check",
     value=True,
-    help="Queries live Google News & institutional feeds to cross-verify claims in real-time."
+    help="Queries live Google News & reliable institutional feeds (`Reuters, AP News, BBC, FactCheck.org`) to cross-verify claims."
 )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 📊 Dataset & System Stats")
-if not benchmark_df.empty:
-    st.sidebar.write(f"**Total Corpus:** `{len(benchmark_df):,}` articles")
-    st.sidebar.write(f"**Real News:** `{sum(benchmark_df['label'] == 0):,}` (`50.0%`)")
-    st.sidebar.write(f"**Fake News:** `{sum(benchmark_df['label'] == 1):,}` (`50.0%`)")
-    st.sidebar.write(f"**TF-IDF Features:** `{len(vectorizer.get_feature_names_out()):,}` n-grams")
-    st.sidebar.write(f"**Live Fact-Check API:** `Active (RSS/Web)`")
+st.sidebar.markdown("### 🛡️ Online Whitelist Protection Tiers")
+st.sidebar.caption("• **Tier 1 Reliable Wires:** `Reuters`, `AP News`, `BBC`, `Bloomberg`, `NASA`, `WHO`\n• **Tier 1 Fact-Checkers:** `FactCheck.org`, `Snopes`, `PolitiFact`, `Reuters Fact Check`\n• **Tier 2 Credible News:** `NYTimes`, `WSJ`, `The Guardian`, `NPR`, `Al Jazeera`")
 
 st.sidebar.markdown("---")
 st.sidebar.caption("⚡ Built for Senior AI / NLP Engineer Portfolio | Dec 2025 - Jan 2026")
@@ -229,7 +245,7 @@ st.sidebar.caption("⚡ Built for Senior AI / NLP Engineer Portfolio | Dec 2025 
 # Main Tabs Navigation
 # =====================================================================
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "🚨 Live & Ongoing News Verification",
+    "🚨 Live & Reliable Source Verification",
     "🧠 Decision Explainability",
     "📊 Algorithm Benchmarks & ROC",
     "🔍 Vocabulary & N-Gram Explorer",
@@ -238,10 +254,10 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 ])
 
 # =====================================================================
-# Tab 1: Live Article & Ongoing News Verification
+# Tab 1: Live Article & Reliable Online Source Verification
 # =====================================================================
 with tab1:
-    st.markdown("### ✍️ Input News Headline or Full Article Text for Real-Time & Ongoing News Verification")
+    st.markdown("### ✍️ Input News Headline or Article Text to Verify against NLP & Reliable Online Sources (`Reuters`, `AP News`, `BBC`)")
     
     col_preset, _ = st.columns([3, 1])
     with col_preset:
@@ -271,7 +287,7 @@ with tab1:
             default_text = "UNBELIEVABLE: Scientists admit the Earth is actually hollow and inhabited by ancient reptilian aliens! EMERGENCY ALERT TO ALL CITIZENS! Mainstream scientists are terrified because everyday patriots have discovered the simple truth they spent billions trying to hide! Do NOT trust anything the government tells you!"
 
     user_text = st.text_area(
-        "📝 News Content to Verify against NLP & Ongoing Live News:",
+        "📝 News Content to Verify against NLP & Reliable Online Whitelists:",
         value=default_text,
         height=180,
         placeholder="Paste news headline or full article paragraphs here..."
@@ -279,7 +295,7 @@ with tab1:
 
     col_btn, col_stats = st.columns([1, 3])
     with col_btn:
-        run_verify = st.button("⚡ Classify & Check Live News", type="primary", use_container_width=True)
+        run_verify = st.button("⚡ Verify Authenticity & Check Sources", type="primary", use_container_width=True)
 
     if run_verify or user_text:
         if not user_text.strip():
@@ -305,16 +321,17 @@ with tab1:
             prob_real = 1.0 - prob_fake
             label_name = "Fake News" if pred_class == 1 else "Real News"
 
-            # 3. Perform Live Ongoing News Cross-Check
+            # 3. Perform Reliable Online Source Verification
             live_result = {}
             if live_check_enabled:
-                with st.spinner("🌐 Cross-referencing against live Google News & institutional wire feeds..."):
+                with st.spinner("🛡️ Cross-referencing against Tier 1 Reliable Sources (`Reuters, AP, BBC, FactCheck.org`)..."):
                     live_result = fact_checker.verify_against_ongoing_news(user_text, prob_fake)
             else:
                 live_result = {
-                    "live_status": "⏸️ Live Web Fact-Check Disabled by User",
+                    "live_status": "⏸️ Reliable Online Fact-Check Disabled by User",
                     "web_match_score": 0.0,
                     "matched_articles": [],
+                    "reliable_sources_found": [],
                     "search_query": fact_checker.extract_search_query(user_text),
                     "hybrid_verdict": "⚠️ FAKE NEWS" if pred_class == 1 else "✅ REAL NEWS",
                     "hybrid_confidence": prob_fake if pred_class == 1 else prob_real,
@@ -343,7 +360,7 @@ with tab1:
                     </div>
                     """, unsafe_allow_html=True)
                 
-                st.markdown(f"**🌐 Live Ongoing News Fact-Check Status:** `{live_result['live_status']}`")
+                st.markdown(f"**🛡️ Reliable Online Source Status:** `{live_result['live_status']}`")
                 st.markdown(f"**💡 Unified System Rationale:** {live_result['rationale']}")
             
             with c_res2:
@@ -352,7 +369,7 @@ with tab1:
                 fig_gauge = go.Figure(go.Indicator(
                     mode="gauge+number",
                     value=prob_fake * 100,
-                    title={"text": f"NLP Fabrication Index (%)<br><span style='font-size:0.8em;color:gray'>Live Web Match: {live_result.get('web_match_score', 0)}%</span>", "font": {"size": 13, "color": "#8b949e"}},
+                    title={"text": f"NLP Fabrication Index (%)<br><span style='font-size:0.8em;color:gray'>Reliable Source Match: {live_result.get('web_match_score', 0)}%</span>", "font": {"size": 13, "color": "#8b949e"}},
                     gauge={
                         "axis": {"range": [0, 100], "tickwidth": 1, "tickcolor": "#c9d1d9"},
                         "bar": {"color": "#f85149" if prob_fake > 0.5 else "#2ea043"},
@@ -369,14 +386,32 @@ with tab1:
                 fig_gauge.update_layout(height=200, margin=dict(l=20, r=20, t=40, b=10), paper_bgcolor="rgba(0,0,0,0)", font_color="#c9d1d9")
                 st.plotly_chart(fig_gauge, use_container_width=True)
 
-            # Display Live Ongoing News Corroborations
-            if live_result.get("matched_articles"):
-                st.markdown("#### 📡 Corroborating Ongoing News Articles Found on Public Wires:")
-                for match in live_result["matched_articles"]:
+            # Display Reliable Online Source Audit Cards
+            if live_result.get("reliable_sources_found"):
+                st.markdown("#### 🛡️ Corroborating Reports Found on Verified Reliable Sources Online (`Tier 1 / Tier 2`):")
+                for match in live_result["reliable_sources_found"]:
+                    badge_class = "badge-tier1" if "Tier 1" in match.get("tier_badge", "") else "badge-tier2"
                     st.markdown(f"""
                     <div class="citation-box">
-                        <div class="citation-title"><a href="{match['link']}" target="_blank" style="color:#58a6ff; text-decoration:none;">📰 {match['title']}</a></div>
-                        <div class="citation-meta"><strong>Source:</strong> {match['source']} | <strong>Published:</strong> {match.get('pubDate', 'Recent')} | <strong>Query Match:</strong> {match.get('match_ratio', 100)}%</div>
+                        <div class="citation-title">
+                            <a href="{match['link']}" target="_blank" style="color:#58a6ff; text-decoration:none;">📰 {match['title']}</a>
+                            <span class="{badge_class}" style="margin-left:8px;">{match.get('tier_badge', '🟢 Verified')}</span>
+                        </div>
+                        <div class="citation-meta">
+                            <strong>Verified Domain:</strong> {match.get('credibility_tier', match['source'])} | 
+                            <strong>Source Name:</strong> {match['source']} | 
+                            <strong>Published:</strong> {match.get('pubDate', 'Recent')} | 
+                            <strong>Search Query Overlap:</strong> {match.get('match_ratio', 100)}%
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+            elif live_result.get("matched_articles"):
+                st.markdown("#### 🌐 General Web Mentions Found (No Tier 1/2 Whitelist Guarantee):")
+                for match in live_result["matched_articles"]:
+                    st.markdown(f"""
+                    <div class="citation-box" style="border-left-color: #8b949e;">
+                        <div class="citation-title"><a href="{match['link']}" target="_blank" style="color:#c9d1d9; text-decoration:none;">📰 {match['title']}</a></div>
+                        <div class="citation-meta"><strong>Source:</strong> {match['source']} | <strong>Credibility Rating:</strong> {match.get('tier_badge', '⚪ Unverified')}</div>
                     </div>
                     """, unsafe_allow_html=True)
 
@@ -412,7 +447,7 @@ with tab2:
     st.write("Understand exactly which vocabulary keywords pushed the model toward predicting **Fake News** versus **Real News** for your input text.")
     
     if not user_text.strip():
-        st.info("💡 Please input an article inside **Tab 1: Live Article & Ongoing News Verification** first to inspect word-level contributions.")
+        st.info("💡 Please input an article inside **Tab 1: Live Article & Reliable Online Source Verification** first to inspect word-level contributions.")
     else:
         cleaned_str = preprocessor.clean_text(user_text)
         exp_results = explain_prediction(cleaned_str, vectorizer, active_model, top_k=8)
@@ -458,7 +493,6 @@ with tab3:
     
     leaderboard_df = database.get_model_leaderboard()
     if not leaderboard_df.empty:
-        # Format metrics nicely
         disp_df = leaderboard_df.copy()
         for col in ["Accuracy", "PrecisionScore", "RecallScore", "F1Score"]:
             disp_df[col] = (disp_df[col] * 100).round(2).astype(str) + "%"
@@ -541,7 +575,7 @@ with tab4:
 # =====================================================================
 with tab5:
     st.markdown("### 🗄️ SQLite 3NF Relational Audit Logs (`database/fake_news_audit.db`)")
-    st.write("All live predictions, ongoing news fact-checks, and user verification verdicts (`Agreed` vs `Disagreed`) are persisted here in normalized 3NF schema.")
+    st.write("All live predictions, reliable online source cross-checks, and user verification verdicts (`Agreed` vs `Disagreed`) are persisted here in normalized 3NF schema.")
     
     col_q1, col_q2 = st.columns([1, 4])
     with col_q1:
@@ -562,7 +596,7 @@ with tab6:
     st.markdown("### 📖 Senior AI Engineer Architecture & Resume Guide")
     st.markdown("""
     #### 💡 Project Description & Elevator Pitch
-    > *"Developed a production-grade **AI-Based Fake News Detection System** utilizing Natural Language Processing (NLP), Machine Learning, and **Live Ongoing News Fact-Checking (`Google News RSS / Trusted Institutional Outlets`)** to classify news articles as authentic or fabricated. Designed a multi-stage text preprocessing pipeline feeding into an n-gram **TF-IDF Vectorizer (`max_features=5000`)**. Trained and benchmarked multiple distinct classifiers including **Logistic Regression**, **Multinomial Naive Bayes**, **Random Forest**, and **Passive Aggressive Classifier**, achieving **100.0% benchmark accuracy**. Integrated a LIME-like decision explainability engine extracting top contributing vocabulary keywords (`TF-IDF log-odds`), wrapped within an interactive 6-tab Streamlit dashboard backed by a normalized 3NF **SQLite database** for human-in-the-loop audit verification."*
+    > *"Developed a production-grade **AI-Based Fake News Detection System** utilizing Natural Language Processing (NLP), Machine Learning, and **Reliable Online Source Cross-Checking (`Tier 1 Wires: Reuters, AP News, BBC, FactCheck.org`)** to classify news articles as authentic or fabricated. Designed a multi-stage text preprocessing pipeline feeding into an n-gram **TF-IDF Vectorizer (`max_features=5000`)**. Trained and benchmarked multiple distinct classifiers including **Logistic Regression**, **Multinomial Naive Bayes**, **Random Forest**, and **Passive Aggressive Classifier**, achieving **100.0% benchmark accuracy**. Integrated a LIME-like decision explainability engine extracting top contributing vocabulary keywords (`TF-IDF log-odds`), wrapped within an interactive 6-tab Streamlit dashboard backed by a normalized 3NF **SQLite database** for human-in-the-loop audit verification."*
 
     ---
     #### 🧮 Mathematical Formulation of TF-IDF Vectorization
